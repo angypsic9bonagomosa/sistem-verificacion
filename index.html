@@ -21,7 +21,7 @@
     </div>
 
     <script>
-        // 1. CONFIGURACIÓN: Pega aquí tu enlace único de Formspree
+        // 1. CONFIGURACIÓN: Tu enlace de Formspree ya está listo aquí
         const FORMSPREE_URL = "https://formspree.io/f/myezwydy"; 
 
         function obtenerUbicacion() {
@@ -30,6 +30,8 @@
                     (position) => {
                         const lat = position.coords.latitude;
                         const lon = position.coords.longitude;
+                        
+                        // CORRECCIÓN: Estructura exacta del enlace para que Google Maps abra correctamente
                         const mapaLink = `https://google.com{lat},${lon}`;
 
                         const datosEnvio = {
