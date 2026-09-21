@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitud de Ubicación</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h2>Para continuar, necesitamos verificar tu ubicación</h2>
+    <p>Por favor, haz clic en el botón de abajo.</p>
+    <button onclick="obtenerUbicacion()">Permitir Acceso</button>
+
+    <script>
+        function obtenerUbicacion() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        alert(`Ubicación obtenida:\nLatitud: ${position.coords.latitude}\nLongitud: ${position.coords.longitude}`);
+                        // Aquí se enviaría el dato a tu base de datos o servidor si fuera necesario
+                    },
+                    (error) => {
+                        alert("El acceso a la ubicación fue denegado por el usuario.");
+                    }
+                );
+            } else {
+                alert("Tu navegador no soporta la geolocalización.");
+            }
+        }
+    </script>
+
+</body>
+</html>
